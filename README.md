@@ -6,9 +6,9 @@ Simple python tool that checks for malicious/suspicious IP connection on local m
 This is how the script gears run:
 1. The script starts by running as from command line the ipconfig command
 2. It saves the result to a txt file
-3. It parses the file searching for the points where DNS Servers are listed
-4. It retrieves the IPv4
-5. Checks them against AbuseIPDB using the API
+3. It parses the file looking for IP connections
+4. It retrieves the IPs, port used and connection status
+5. Checks IPs against AbuseIPDB using the API
 6. Shows the results giving advice based on the confidence score
 
 Colored scheme work as the following table:
