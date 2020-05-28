@@ -1,4 +1,4 @@
-# NET VERIFIER
+# NetFier
 
 Simple python tool that checks for malicious/suspicious IP connection on local machine using AbuseIPDB.
 
