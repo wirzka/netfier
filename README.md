@@ -22,7 +22,6 @@ Colored scheme work as the following table:
 ### Prerequisites
 
 * Windows OS
-* Unix based OS coming soon
 * Python version: `3.7`
 * [AbuseIPDB](https://www.abuseipdb.com) profile for the API KEY
 * [AbusedIpDB](https://github.com/vsecades/AbuseIpDb) by [Vsecades](https://github.com/vsecades)
