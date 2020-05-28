@@ -30,14 +30,13 @@ Colored scheme work as the following table:
 Once you satisfy all the prerequisites, just launch it and let him do the magic.
 
 ## Purpose of this tool
-I've created this tool just for educational purpose.
+Checking any suspicious connection.
+By the way, I've created this tool just for educational purpose.
 Feel free to show me better way to do it.
 
 ## Authors
 
-* **Andrea Grigoletto** - *Initial work* - [Wirzka](https://github.com/wirzka)
-
-See also the list of [contributors](https://github.com/wirzka/dnsverifier/contributors) who participated in this project.
+* **Andrea Grigoletto** - [Wirzka](https://github.com/wirzka)
 
 ## Acknowledgments
 
