@@ -1,3 +1,19 @@
+'''
+    netfier.py - Python 3.7.3
+    Author: wirzka
+    E-mail: wiirzka@gmail.com
+    Git: https://github.com/wirzka
+    Description:
+        I wrote this tool just for educational purpose.
+        Netfier is a simple tool to check if the machine's connections are
+        malicious/suspicious, so if they require deeper investigation.
+        For this job, at this moment the script uses AbusedIPDB.
+    Requirements:
+        - Python version: 3.7
+        - AbusedIPDB profile for the API KEY
+        - AbusedIpDB by @vsecades: https://github.com/vsecades/AbuseIpDb
+'''
+
 import netaddr
 import subprocess
 import sys
@@ -175,4 +191,3 @@ if __name__ == "__main__":
         print("\n\033[91m[!] You have interrupted the stuff with your keyboard, bye. [!]\033[00m")
         time.sleep(3)
         sys.exit(0)
-    
