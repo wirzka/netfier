@@ -13,16 +13,17 @@
         - AbusedIPDB profile for the API KEY
         - AbusedIpDB by @vsecades: https://github.com/vsecades/AbuseIpDb
 '''
-
+#starwars #speed #slant #sblood
 import netaddr
 import subprocess
 import sys
 import re
 from os import system
 import time
+import pprint
 from colorama import Fore
 from abuseipdb import AbuseIPDB
-
+from art import *
 
 #============ API KEY  ===============#
 abuse = AbuseIPDB(apikey='')
@@ -42,6 +43,27 @@ ip2check = []
 # regex rule to filter IPv4 addresses
 regex_IPv4 = '(?<![-\\.\\d])(?:0{0,2}?[0-9]\\.|1\\d?\\d?\\.|2[0-5]?[0-5]?\\.){3}(?:0{0,2}?[0-9]|1\\d?\\d?|2[0-5]?[0-5]?)(?![\\.\\d])'
 
+# dictionary for final statistics
+stat_dict = {
+    "Good" : 0,
+    "Maybe check it" : 0,
+    "Check it" : 0,
+    "Absolutely check it!" : 0
+}
+
+
+#========= CLASS SECTION =============#
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
 
 #======== FUNCTION SECTION ===========#
 
@@ -52,7 +74,7 @@ def scanFile():
 
         # getting the lines from the file
         lines = netres.readlines()
-        print("\nACTIVE CONNECTIONS: {}\n".format(len(lines)-3))
+        print(color.BOLD + color.YELLOW + '\nTOTAL ACTIVE CONNECTIONS:' + color.END + ' {}\n'.format(len(lines)-3))
         cnt = 0
 
         # starting from 4 to remove the headers
@@ -74,19 +96,16 @@ def scanFile():
 # function to output the details of all the active external connections and  populate ip2check list
 def printResVerb():
     global ip2add, ip2check
-    print('\n' + '-' * 15 + 'LISTING DETAILS' + '-' * 14)
+    print('\033[92m\n' + '-' * 15 + 'VERBOSE MODE ACTIVATED' + '-' * 14 + '\033[00m')
     for id in range(0,len(id_list)):
-        print("ID {}".format(id+1))
-    
-        print('Protocol: {}'.format(id_list[id][0]))
-        print('Local IP-PORT: {}'.format(id_list[id][1]))
-        print('External IP-PORT: {}'.format(id_list[id][2]))
-        
+        print(color.PURPLE + color.BOLD + "{:<15s}".format('ID ' + str(id+1) + color.END))
+        print(color.BOLD + '{:<18s}'.format('Protocol:') + color.END + '{:<24s}'.format(id_list[id][0]))
+        print(color.BOLD + '{:<18s}'.format('Local IP-PORT:') + color.END + '{:<24s}'.format(id_list[id][1]))
+        print(color.BOLD + '{:<18s}'.format('External IP-PORT:') + color.END + '{:<24s}'.format(id_list[id][2]))
+        print(color.BOLD + '{:<18s}'.format('Status:') + color.END + '{:<24s}\n'.format(id_list[id][3]))
+
         ip2add = id_list[id][2].split(':', 1)[0]
         ip2check.append(ip2add)
-        print('Status: {}'.format(id_list[id][3]))
-        print("\n------------------\n")
-    # print(ip2check)
 
 # function that only populate ip2check list
 def printRes():
@@ -101,86 +120,141 @@ def checkConn():
     ip2check = list(set(ip2check))
     for ip in range(0,len(ip2check)):
         q = abuse.check(ipAddress=ip2check[ip], maxAgeInDays=90)
-
+        
         # calling a dedicated print function to print the results
         printIP(ip2check[ip], q)
 
 # function that prints the results from AbusedIPDB
 def printIP(ip, abuse_res):
     stat = ''
-    print('\n Results for IP ' + ip)
-    print('- IP: ' + abuse_res.ipAddress)
-    print('- Public: ' + str(abuse_res.isPublic))
-    print('- Whitelisted: ' + str(abuse_res.isWhitelisted))
-    
-    '''
-        Using ANSI escape sequence to color the advice output:
-        - Good: 0 - 30 > green '\033[92m <string> \033[00m'
-        - Maybe check it: 30 - 50 > cyan '\036[92m <string> \033[00m'
-        - Check it: 50 - 60 > yellow '\033[923m <string> \033[00m'
-        - Absolutely check it!: 60 - 100 > red '\033[91m <string> \033[00m'
-    '''
-    
+         
     if abuse_res.abuseConfidenceScore > 30 and abuse_res.abuseConfidenceScore < 50:
         # cyan
-        stat = '\033[96m[Maybe check it]\033[00m'
+        stat = color.CYAN + '[Maybe check it]' + color.END
+        stat_dict["Maybe check it"] += 1
     
     elif abuse_res.abuseConfidenceScore > 50 and abuse_res.abuseConfidenceScore < 60:
         # yellow
-        stat = '\033[93m[Check it]\033[00m'
-    
+        stat = color.YELLOW + '[Check it]' + color.END
+        stat_dict["Check it"] += 1
+
     elif abuse_res.abuseConfidenceScore > 60:
         # red
-        stat = '\033[91m[Absolutely check it!]\033[00m'
-    
+        stat = color.RED + '[Absolutely check it!]' + color.END
+        stat_dict["Absolutely check it!"] += 1
+
     else:
         # green
-        stat = '\033[92m[Good]\033[00m'
-
-    print('- Abuse score: ' + str(abuse_res.abuseConfidenceScore) +' ' + stat)
-    print('- Total reports: ' + str(abuse_res.totalReports))
+        stat = color.GREEN + '[Good]' + color.END
+        stat_dict["Good"] += 1
+        
+    print(color.BOLD + color.PURPLE + '\n Results for IP ' + ip + color.END)
+    print(color.BOLD + '{:<18s}'.format('- IP') + color.END + '{:<30}'.format(abuse_res.ipAddress))
+    print(color.BOLD + '{:<18s}'.format('- Public:') + color.END + '{:<30}'.format(str(abuse_res.isPublic)))
+    print(color.BOLD + '{:<18s}'.format('- Whitelisted:') + color.END + '{:<30}'.format(str(abuse_res.isWhitelisted)))
     try:
-        print('- Last report: ' + abuse_res.lastReportedAt)
+        print(color.BOLD + '{:<18s}'.format('- Abuse score:') + color.END + '{:<30}'.format(str(abuse_res.abuseConfidenceScore) + ' ' + stat))
     except:
-        print('- Last report: never')
-    print('- Usage type: ' + abuse_res.usageType)
-    print('[!] Other info [!]')
-    print('- Domain: ' + abuse_res.domain)
-    print('- Country code: ' + abuse_res.countryCode)
-    print('- Country name: ' + abuse_res.countryName)
-    print('- ISP: ' + abuse_res.isp)
+        print(color.BOLD + '{:<18s}'.format('- Abuse score:') + color.END + '{:<30}'.format('N/D'))
+    try:
+        print(color.BOLD + '{:<18s}'.format('- Total reports:') + color.END + '{:<30}'.format(str(abuse_res.totalReports)))
+    except:
+        print(color.BOLD + '{:<18s}'.format('- Total reports:') + color.END + '{:<30}'.format(' N/D'))
+    try:
+        print(color.BOLD + '{:<18s}'.format('- Last report:') + color.END + '{:<30}'.format(abuse_res.lastReportedAt))
+    except:
+        print(color.BOLD + '{:<18s}'.format('- Last report:') + color.END + '{:<30}'.format('never'))
+    try:
+        print(color.BOLD + '{:<18s}'.format('- Usage type:') + color.END + '{:<30}'.format(abuse_res.usageType))
+    except:
+        print('{:<18s}'.format('- Usage type:') + '{:<30}'.format('N/D'))
+
+    print(color.BOLD + '[!] Other info [!]' + color.END)
+    try:
+        print(color.BOLD + '{:<18s}'.format('- Domain:') + color.END + '{:<30}'.format(abuse_res.domain))
+    except:
+        print(color.BOLD + '{:<18s}'.format('- Domain:') + color.END + '{:<30}'.format(' N/D'))
+    try:
+        print(color.BOLD + '{:<18s}'.format('- Country code:') + color.END + '{:<30}'.format(abuse_res.countryCode))
+    except:
+        print(color.BOLD + '{:<18s}'.format('- Country code:') + color.END + '{:<30}'.format(' N/D'))
+    try:
+        print(color.BOLD + '{:<18s}'.format('- Country name:') + color.END + '{:<30}'.format(abuse_res.countryName))
+    except:
+        print(color.BOLD + '{:<18s}'.format('- Country name:') + color.END + '{:<30}'.format(' N/D'))
+    try:
+        print(color.BOLD + '{:<18s}'.format('- ISP:') + color.END + '{:<30}'.format(abuse_res.isp))
+    except:
+        print(color.BOLD + '{:<18s}'.format('- ISP:') + color.END + '{:<30}'.format(' N/D'))
+
+# function that generate the connections' statistics
+def stats():
+    print('\n\n' + color.GREEN + color.BOLD + '-' * 10 + 'CONNECTIONS\' STATS' + '-' * 10 + '\n')
+    for key, value in stat_dict.items():
+        if key == 'Absolutely check it!':
+            print(color.RED + color.BOLD + '{:<22s}:'.format(key) + color.END + '{:>3}'.format(value))
+        elif key == 'Check it':
+            print(color.YELLOW + color.BOLD + '{:<22s}:'.format(key) + color.END + '{:>3}'.format(value))
+        elif key == 'Maybe check it':
+            print(color.CYAN + color.BOLD + '{:<22s}:'.format(key) + color.END + '{:>3}'.format(value))
+        elif key == 'Good':
+            print(color.GREEN + color.BOLD + '{:<22s}:'.format(key) + color.END + '{:>3}'.format(value))
+        else:
+            print("Wtf")
+            sys.exit(0)
 
 # function that simply output an introduction message
 def greetings():
     _ = system('cls')
-    print('\nWelcome to NetFier.\nNetFier is programmed to check your connections against AbusedIPDB to see if any of them is suspicious.\n\n- Author: Andrea Grigoletto - Wirzka\n- Github: https://github.com/wirzka\n- NetFier Repo: https://github.com/wirzka/netfier')
+    print(color.GREEN + color.BOLD)
+    tprint("Netfier",font="starwars")
+    print(color.END)
+    print('\033[92mWelcome to NetFier.\n\
+Netfier checks your connections against AbuseIPDB looking for any suspicious IP.\n\033[00m \
+        \n\n- \033[92mAuthor\033[00m: Andrea Grigoletto - Wirzka\
+        \n- \033[92mGithub\033[00m: https://github.com/wirzka\
+        \n- \033[92mNetFier Repo\033[00m: https://github.com/wirzka/netfier')
+
+# function that toggle the disclaimer
+def disclaimer():
+    print('\033[93m\n\n[!] Be Aware:\033[00m\n\
+\033[93m|\033[00m\033[94m If you get all good scores and confidence, it doesn\'t mean that there are only good connections.\033[00m\n\
+\033[93m|\033[00m\033[94m It means that the current connections are not identified as suspicious on AbuseIPDB!\033[00m\n\
+\033[93m|\033[00m \n\
+\033[93m|\033[00m\033[94m AbuseIPDB and other tools like it are useful to gain some infos on IPs\033[00m\n\
+\033[93m|\033[00m\033[94m e.g.: suspicious, behaviour, domain details, etc\033[00m\n\
+\033[93m|\033[00m\033[94m BUT you should be careful to block IP or take some actions just by reviewing a score.\033[00m\n\
+\033[93m|\033[00m\033[94m Go deeper, get more intel and then take some actions, maybe.\033[00m\n\
+\033[93m[!]\033[00m')
 
 # main function
 def main():
+    # ouput the intro message
+    greetings()
+
     p = subprocess.Popen('netstat -n > netres.txt', shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     # out, err = p.communicate()
     p.communicate()
-    # ouput the intro message
-    greetings()
+    
     # scan the txt file containing the IPs
     scanFile()
 
-    # asking to the user if output verbousity is wanted or not
-    ask = input('Do you want to see all the details of the active external connections? \033[92my\033[00m / \033[91mn\033[00m')
+    # asking to the user if output verbosity is wanted or not
+    ask = input('Do you want to see all the details of the active external connections? \033[92my\033[00m / \033[91mn\033[00m ')
     if ask.lower() == 'y':
         printResVerb()
     else:
         printRes()
     
     # checking IPs against AbusedIPDB and printing the resultss
-    print('\n' + '-' * 15 + 'LISTING RESULTS FROM AIPDB' + '-' * 14)
+    print('\033[92m\n' + '-' * 15 + 'LISTING RESULTS FROM AIPDB' + '-' * 14 +'\033[00m')
     checkConn()
     
-    print('\033[94m\n\n[!] Be Aware:\n\
-|   AbusedIPDB and other tools like it are useful to gain some infos on IPs\n\
-|   e.g.: suspicious, behaviour, domain details, etc\n\
-|   BUT you should be careful to block IP or take some actions just by reviewing a score.\n\
-[!] Go deeper, get more intel and then take some actions, maybe.\033[00m\n')
+    # printing statistics infos
+    stats()
+    
+    # printing disclaimer
+    disclaimer()
 
 #========= END FUNCTION SECTION =======#
 
@@ -191,3 +265,4 @@ if __name__ == "__main__":
         print("\n\033[91m[!] You have interrupted the stuff with your keyboard, bye. [!]\033[00m")
         time.sleep(3)
         sys.exit(0)
+    
