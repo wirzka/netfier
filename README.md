@@ -25,6 +25,7 @@ Colored scheme work as the following table:
 * Python version: `3.7`
 * [AbuseIPDB](https://www.abuseipdb.com) profile for the API KEY
 * [AbusedIpDB](https://github.com/vsecades/AbuseIpDb) by [Vsecades](https://github.com/vsecades)
+* [Art](https://github.com/sepandhaghighi/art) for the ASCII art
 
 ### How to use it
 Once you satisfy all the prerequisites, just launch it and let him do the magic.
