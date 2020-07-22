@@ -11,7 +11,7 @@ This is how the script gears run:
 5. Checks IPs against AbuseIPDB using the API
 6. Shows the results giving advice based on the confidence score
 
-Colored scheme work as the following table:
+Colored scheme works as the following table:
 | Advice        | Score range   | Color  |
 | ------------- |:-------------:| ------:|
 | Good          | 0-30  | green |
