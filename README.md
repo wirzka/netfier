@@ -23,7 +23,7 @@ Colored scheme works as the following table:
 
 * Windows OS
 * Python version: `3.7`
-* [AbuseIPDB](https://www.abuseipdb.com) profile for the API KEY
+* [AbuseIPDB](https://www.abuseipdb.com) profile for the [API KEY](https://www.abuseipdb.com/api)
 * [AbuseIpDb](https://github.com/vsecades/AbuseIpDb) by [Vsecades](https://github.com/vsecades)
 * [Art](https://github.com/sepandhaghighi/art) for the ASCII art
 
